@@ -2,7 +2,7 @@
   "name": "bizon",
   "version": "0.1.0",
   "description": "The simple library to run functions in a worker thread.",
-  "main": "./index.js",
+  "main": "index.js",
   "scripts": {
     "build": "tsc",
     "test": "mocha --require ts-node/register tests/units/**/*.ts"

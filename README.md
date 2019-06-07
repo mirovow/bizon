@@ -1,28 +1,11 @@
 # Bizon
 Bizon is a simple Node.js library that allow you to run functions in a worker thread.
 
-### Problem
-```js
-async function someHeavyBlockingFunction() {
-  for (let i = 0; i < 1000000000; i++) {
-    Math.random();
-  }
-}
-
-someHeavyBlockingFunction().then(() => console.log('Done'));
-
-setTimeout(() => {
-  console.log("I'am blocked!");
-});
-
-
-// Done
-// I'am blocked!
-```
-### Solution
+## Installation
 ```
 npm i --save bizon
 ```
+## Basic usage
 ```js
 require('bizon');
 

@@ -1,5 +1,5 @@
 # Bizon
-Bizon is a simple Node.js library that allow you to run functions in a worker thread.
+Bizon is a simple library that allows you to run functions in a worker thread of Node.JS or Web Workers of a browser.
 
 ## Installation
 ```
@@ -9,19 +9,18 @@ npm i --save bizon
 ```js
 require('bizon');
 
-async function someHeavyBlockingFunction() {
-  for (let i = 0; i < 100000000; i++) {
-    Math.random();
-  }
+function fib(n) {
+  return n <= 1 ? n : fib(n - 1) + fib(n - 2);
 }
 
-// You need to call a function with .$ and it's will be run in a worker thread
-someHeavyBlockingFunction.$().then(() => console.log('Done'));
+// You need to call a function with .$ and it will be run in a worker thread of Node.JS or Web Worker in a browser
+// .$ returns a Promise
+fib.$(25).then(result => console.log('fib(25)', result));
 
-setTimeout(() => {
-  console.log("Now I'am not blocked!");
-}, 1);
+// Also you can run a second function, and all of them will work in parallel
+fib.$(28).then(result => console.log('fib(35)', result));
 
-// Now I'am not blocked!
-// Done
+setInterval(() => {
+  console.log("I'm not blocked!");
+}, 200);
 ```

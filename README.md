@@ -18,7 +18,7 @@ function fib(n) {
 fib.$(25).then(result => console.log('fib(25)', result));
 
 // Also you can run a second function, and all of them will work in parallel
-fib.$(28).then(result => console.log('fib(35)', result));
+fib.$(28).then(result => console.log('fib(28, result));
 
 setInterval(() => {
   console.log("I'm not blocked!");

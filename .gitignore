@@ -1,3 +1,7 @@
 .idea/
 build/
 node_modules/
+
+index.js
+index.js.map
+index.d.ts

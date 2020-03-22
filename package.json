@@ -1,6 +1,6 @@
 {
   "name": "bizon",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "The simple library to run functions in a worker thread.",
   "main": "index.js",
   "scripts": {},
@@ -24,8 +24,5 @@
   "devDependencies": {
     "ts-node": "^8.7.0",
     "typescript": "^3.8.2"
-  },
-  "dependencies": {
-    "@types/node": "^13.7.6"
   }
 }

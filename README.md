@@ -22,7 +22,7 @@ const fibonacci = Function.thread((n) => {
 fibonacci(25).then(result => console.log('fibonacci(25)', result));
 
 // Also you can run a second function, and all of them will work in parallel
-fibonacci(35).then(result => consolwe.log('fibonacci(28)', result));
+fibonacci(35).then(result => console.log('fibonacci(35)', result));
 ```
 ### Using imports
 ```js

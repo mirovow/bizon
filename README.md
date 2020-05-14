@@ -7,136 +7,141 @@ npm i --save bizon
 ```
 ## Basic usage
 ```js
-require('bizon');
+const { function$ } = require('bizon');
 
-const fibonacci = Function.thread((n) => {
-  // You can not use recursive call fibonacci(), because the function body of the thread
-  // function can not get outside context
-  function fib(n) {
-    return n <= 1 ? n : fib(n - 1) + fib(n - 2);
-  }
- return fib(n);
-});
 
-// Then you can call the thread function which returns a Promise().
-fibonacci(25).then(result => console.log('fibonacci(25)', result));
+void async function() {
+  // Initialize your own thread function
+  const multiply$ = function$((a, b) => {
+    return a + b;
+  });
+  
+  // Then call the function and get a result. Your thread function returns a promise
+  const result = await multiply$(10, 20);
+  console.log(result); // 30
+}();
 
-// Also you can run a second function, and all of them will work in parallel
-fibonacci(35).then(result => console.log('fibonacci(35)', result));
 ```
 ### Using imports
 ```js
-require('bizon');
+const { function$ } = require('bizon');
 const fs = require('fs');
 
-const readFile = Function.thread((pathToFile) => {
-    // You can use modules which required in the parent thread
+void async function() {
+  // You can use required modules of the parent thread
+  const readFile$ = function$((pathToFile) => {
     return fs.readFileSync(pathToFile).toString();
-});
-
-void async function () {
-    const fileData = await readFile('./README.md');
-    console.log(fileData);
+  });
+  
+  // The function will be async, because it will be run in a thread
+  const result = await readFile$('./index.js');
+  console.log(result);
 }();
 ```
 ### 'this' in a thread function
 You can use 'this' context
 ```js
-require('bizon');
+const { function$ } = require('bizon');
+
+class Person {
+  name = null;
+  
+  setName$ = function$((newName) => {
+    // You can get access to 'this' context inside your thread function!
+    // But remember! You can not use methods of 'this' inside a thread function
+    this.name = newName;
+  });
+}
+
 void async function() {
-    const person = {
-      age: 34,
-      changeAge: Function.thread((newAge) => {
-        this.age = newAge;
-      }),
-    };
-    
-    console.log(person.age); // 34
-    await person.changeAge(50);
-    console.log(person.age); // 50
+  const person = new Person();
+
+  console.log(person.name); // null
+  await person.setName$('Bob');
+  console.log(person.name); // Bob
 }();
+
 ```
 ### Arguments
 You can pass numbers, strings, arrays, objects and functions to the arguments
 ```js
-require('bizon');
-const customMap = Function.thread((arr, handler) => {
-  return arr.map(handler);
-});
+const { function$ } = require('bizon');
 
-customMap([43, 34, 23], (n) => {
-  return String(n);
-}).then(result => console.log(result));
-
-// The passed function have 'this' context of the parent function
 void async function() {
-    const obj = {
-        someConst: 3.14,
-        customMap: Function.thread((arr, callback) => {
-            return arr.map(callback);
-        }),
-    };
-    
-    const result = await obj.customMap([1, 2, 3], (val) => {
-        return this.someConst * val * val;
-    });
-    
-    console.log(result); // [ 3.14, 12.56, 28.259999999999998 ]
+  // You can create the thread map!
+  // You can pass a callbacks to arguments of a thread function
+  Array.prototype.map$ = function$((cb) => {
+    // 'this' will be specify to an array
+    // Just call map in thread function and pass callback
+    return this.map(cb);
+  });
+  
+  const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+  // Just call map$ like the sync map function of an array
+  const result = await numbers.map$((val, i) => {
+    return val ** i;
+  });
+  
+  console.log(result);
 }();
 ```
-## Restrictions
-You can not use recursive calls
+### Recursive calls
+You can call your function recursively
 ```js
-require('bizon');
-const fib = Function.thread((n) => {
-  return n <= 1 ? n : fib(n - 1) + fib(n - 2);
-});
+const { function$ } = require('bizon');
 
-fib().then(result => console.log(result));
+void async function () {
+  // For recursively call you need to pass named function expression as callback
+  const fib$ = function$(function fib(n) {
+    return n <= 1 ? n : fib(n - 1) + fib(n - 2);
+  });
+  
+  const result = await fib$(40);
+  console.log(result) // 102334155
+}();
 
-// UnhandledPromiseRejectionWarning: Error: fib is not defined
 ```
+
+## Restrictions
 You can not get access to variables defined outside the function
 ```js
-require('bizon');
+const { function$ } = require('bizon');
 
 const a = 10;
 
-const func = Function.thread(() => {
+const func$ = function$(() => {
   return a + 5;
 });
 
-func().then(result => console.log(result));
+func$().then(result => console.log(result));
 
 // Error: ReferenceError: a is not defined
 ```
 You can not return objects and arrays with promises and functions
 ```js
-require('bizon');
+const { function$ } = require('bizon');
 
-const func = Function.thread(() => {
+const func$ = function$(() => {
     return {
       foo: new Promise((resolve) => resolve('hello')),
-      baz: function() {
-        return 'hello'
-      }
     };
 });
 
-func().then(result => console.log(result));
+func$().then(result => console.log(result));
 
 //  Error: DataCloneError: #<Promise> could not be cloned.
 ```
 You can not return functions
 ```js
-require('bizon');
+const { function$ } = require('bizon');
 
-const func = Function.thread(() => {
+const func$ = function$(() => {
     return function() {
       return 'hello';
     }
 });
-func().then(result => console.log(result));
+func$().then(result => console.log(result));
 
 // Error: DataCloneError: function () {
 //   return 'hello';

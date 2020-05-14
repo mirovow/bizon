@@ -4,3 +4,4 @@ src/
 tests/
 tsconfig.json
 index.js.map
+jest.config.js

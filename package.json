@@ -1,13 +1,17 @@
 {
   "name": "bizon",
-  "version": "0.2.1",
+  "version": "1.0.2",
   "description": "The simple library to run functions in a worker thread.",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "jest"
+  },
   "keywords": [
     "threads",
     "workers",
-    "functions"
+    "functions",
+    "parallel",
+    "multithread"
   ],
   "author": {
     "name": "Alexandr Mirovow",
@@ -22,7 +26,11 @@
     "node": ">=10.0.0"
   },
   "devDependencies": {
+    "@types/jest": "^25.2.1",
+    "@types/node": "^13.13.4",
+    "jest": "^25.5.1",
+    "ts-jest": "^25.4.0",
     "ts-node": "^8.7.0",
-    "typescript": "^3.8.2"
+    "typescript": "^3.8.3"
   }
 }
